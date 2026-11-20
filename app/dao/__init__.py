@@ -1,0 +1,1 @@
+"""Camada de persistência: todo o acesso ao banco passa por aqui."""
