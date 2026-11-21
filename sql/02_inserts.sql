@@ -15,11 +15,11 @@ INSERT INTO Funcionario (
     (1, 2, 'Clara Cavalcanti', '10120230303', 'clara.c@banco.local', 'clara.cavalcanti', '2023-05-01', 'Pendente', 'Ativo', 'hash_clara_123'),
     (1, 3, 'Gustavo Tavares', '10120230304', 'gustavo.t@banco.local', 'gustavo.tavares', '2022-08-20', 'Regular', 'Ativo', 'hash_gustavo_123'),
     (1, 2, 'Isabela Monteiro', '10120230305', 'isabela.m@banco.local', 'isabela.monteiro', '2024-01-12', 'Irregular', 'Ativo', 'hash_isabela_123'),
-    (1, 4, 'Diego Azevedo', '10120230306', 'diego.a@banco.local', 'diego.azevedo', '2021-11-05', 'Regular', 'Ativo', 'hash_diego_123'),
-    (1, 3, 'Sofia Medeiros', '10120230307', 'sofia.m@banco.local', 'sofia.medeiros', '2023-09-18', 'Regular', 'Ativo', 'hash_sofia_123'),
-    (1, 2, 'Henrique Peixoto', '10120230308', 'henrique.p@banco.local', 'henrique.peixoto', '2024-03-04', 'Regular', 'Ativo', 'hash_henrique_123'),
-    (1, 2, 'Laura Silveira', '10120230309', 'laura.s@banco.local', 'laura.silveira', '2024-06-22', 'Pendente', 'Ativo', 'hash_laura_123'),
-    (1, 3, 'Vinicius Bittencourt', '10120230310', 'vinicius.b@banco.local', 'vinicius.bittencourt', '2022-04-11', 'Regular', 'Ativo', 'hash_vinicius_123');
+    (NULL, 1, 'Diego Azevedo', '10120230306', 'diego.a@banco.local', 'diego.azevedo', '2021-11-05', 'Regular', 'Ativo', 'hash_diego_123'),
+    (6, 3, 'Sofia Medeiros', '10120230307', 'sofia.m@banco.local', 'sofia.medeiros', '2023-09-18', 'Regular', 'Ativo', 'hash_sofia_123'),
+    (6, 2, 'Henrique Peixoto', '10120230308', 'henrique.p@banco.local', 'henrique.peixoto', '2024-03-04', 'Regular', 'Ativo', 'hash_henrique_123'),
+    (6, 2, 'Laura Silveira', '10120230309', 'laura.s@banco.local', 'laura.silveira', '2024-06-22', 'Pendente', 'Ativo', 'hash_laura_123'),
+    (6, 3, 'Vinicius Bittencourt', '10120230310', 'vinicius.b@banco.local', 'vinicius.bittencourt', '2022-04-11', 'Regular', 'Ativo', 'hash_vinicius_123');
 
 
 INSERT INTO Cliente (
@@ -120,6 +120,7 @@ INSERT INTO Funcionario_Certificacao (
     (4, 2, '2024-05-15', '2027-05-15', NULL),
     (4, 3, '2024-06-01', '2027-06-01', NULL),
     (6, 4, '2025-01-20', '2027-01-20', NULL),
+    (6, 1, '2023-11-05', '2028-11-05', NULL),
     (7, 2, '2024-07-10', '2027-07-10', NULL),
     (8, 1, '2024-09-01', '2029-09-01', NULL),
     (10, 2, '2023-11-10', '2026-11-10', NULL);
