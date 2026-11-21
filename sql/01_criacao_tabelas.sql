@@ -115,7 +115,7 @@ CREATE TABLE Transacao (
     id_transacao INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_conta INT NOT NULL,
     id_funcionario INT NOT NULL,
-    tipo VARCHAR(20)
+    tipo VARCHAR(20) NOT NULL
         CHECK (tipo IN ('Deposito', 'Saque')),
     valor DECIMAL(15,2) NOT NULL,
     data_hora TIMESTAMP,
