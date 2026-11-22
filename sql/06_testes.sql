@@ -61,15 +61,28 @@ SELECT saldo FROM Conta WHERE id_conta = 5;
 -- esperado: 550.00 (inalterado)
 
 
--- 6) EMPRESTIMO (conta 4, saldo inicial 1500.00)
--- 6a) aprovado: Gustavo (4) tem CPA-20 e CEA validas
+
+-- 6) TRIGGER DE BLOQUEIO DE SAQUE (conta 7 esta Bloqueada: deve negar o emprestimo e nao deixar rastro)
+DO $$
+BEGIN
+    CALL conceder_emprestimo(7, 4, 500.00, 1.50, 5);
+    RAISE NOTICE 'FALHOU: conta bloqueada deveria negar';
+EXCEPTION WHEN raise_exception THEN
+    RAISE NOTICE 'OK, negado: %', SQLERRM;
+END $$;
+SELECT COUNT(*) FROM Emprestimo;
+-- esperado: 4 (nada foi criado)
+
+
+-- 7) EMPRESTIMO (conta 4, saldo inicial 1500.00)
+-- 7a) aprovado: Gustavo (4) tem CPA-20 e CEA validas
 CALL conceder_emprestimo(4, 4, 1000.00, 1.50, 10);
 SELECT saldo FROM Conta WHERE id_conta = 4;
 -- esperado: 2500.00
 SELECT COUNT(*) FROM Emprestimo;
 -- esperado: 5
 
--- 6b) negado: Isabela (5) tem a CPA-10 vencida
+-- 7b) negado: Isabela (5) tem a CPA-10 vencida
 DO $$
 BEGIN
     CALL conceder_emprestimo(4, 5, 1000.00, 1.50, 10);
@@ -83,7 +96,7 @@ SELECT saldo FROM Conta WHERE id_conta = 4;
 -- esperado: 2500.00 (sem credito)
 
 
--- 7) VIEWS
+-- 8) VIEWS
 SELECT * FROM view_extrato_conta WHERE numero_conta = 10005 ORDER BY data_hora;
 -- esperado: 4 linhas (2 do seed + deposito 200 + saque 150) | Samuel Castilho | saldo_atual 550.00
 
@@ -91,7 +104,7 @@ SELECT * FROM view_conformidade_equipe WHERE funcionario = 'Isabela Monteiro';
 -- esperado: Atendente | gerente Helena Vasconcelos | CPA-10 | validade 2026-10-01
 
 
--- 8) CHECAGEM FINAL (as duas devem voltar 0 linhas)
+-- 9) CHECAGEM FINAL (as duas devem voltar 0 linhas)
 SELECT c.numero, c.saldo
 FROM Conta c
 LEFT JOIN Transacao t ON t.id_conta = c.id_conta

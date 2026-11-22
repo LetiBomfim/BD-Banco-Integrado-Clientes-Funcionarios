@@ -24,13 +24,17 @@ EXECUTE FUNCTION fun_atualiza_saldo();
 
 CREATE OR REPLACE FUNCTION fun_bloquea_saque_sem_saldo()
 RETURNS TRIGGER AS $$
-DECLARE 
-    variavel_saldo NUMERIC;
-
+DECLARE
+    variavel_saldo  NUMERIC;
+    variavel_status VARCHAR;
 BEGIN
-    SELECT saldo INTO variavel_saldo
+    SELECT saldo, status INTO variavel_saldo, variavel_status
     FROM Conta
     WHERE id_conta = NEW.id_conta;
+
+    IF variavel_status <> 'Ativa' THEN
+        RAISE EXCEPTION 'Operacao nao permitida: conta %', lower(variavel_status);
+    END IF;
 
     IF NEW.tipo = 'Saque' AND variavel_saldo < NEW.valor THEN
         RAISE EXCEPTION 'Saldo insuficiente para realizar o saque';
