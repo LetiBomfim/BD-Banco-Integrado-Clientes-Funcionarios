@@ -238,3 +238,5 @@ desktop.ini
 # Arquivos de teste local
 teste_*.py
 criar_teste.py
+
+arquivos_exportados/
