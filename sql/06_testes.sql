@@ -114,3 +114,57 @@ HAVING c.saldo <> COALESCE(SUM(CASE WHEN t.tipo = 'Deposito' THEN t.valor ELSE -
 SELECT id_funcionario, situacao_conformidade
 FROM Funcionario
 WHERE situacao_conformidade <> fun_calcula_conformidade(id_funcionario);
+
+-- 10) NOVAS REGRAS 
+-- 10a) conta nova sem informar saldo comeca com 0 e soma depositos
+INSERT INTO Conta (id_cliente, id_tipo, numero, data_abertura, status)
+VALUES (1, 1, 20001, CURRENT_DATE, 'Ativa');
+INSERT INTO Transacao (id_conta, id_funcionario, tipo, valor, descricao)
+VALUES ((SELECT id_conta FROM Conta WHERE numero = 20001), 2, 'Deposito', 100.00, 'Teste conta nova');
+SELECT numero, saldo FROM Conta WHERE numero = 20001;
+-- esperado: 20001 | 100.00
+
+-- 10b) valor negativo, numero de conta repetido, alterar/excluir transacao: todos recusados
+DO $$
+BEGIN
+    BEGIN
+        INSERT INTO Transacao (id_conta, id_funcionario, tipo, valor) VALUES (1, 2, 'Saque', -1000);
+        RAISE NOTICE 'FALHOU: valor negativo aceito';
+    EXCEPTION WHEN check_violation THEN RAISE NOTICE 'OK, valor negativo recusado';
+    END;
+    BEGIN
+        INSERT INTO Conta (id_cliente, id_tipo, numero, status) VALUES (1, 1, 10001, 'Ativa');
+        RAISE NOTICE 'FALHOU: numero repetido aceito';
+    EXCEPTION WHEN unique_violation THEN RAISE NOTICE 'OK, numero repetido recusado';
+    END;
+    BEGIN
+        DELETE FROM Transacao WHERE id_transacao = 1;
+        RAISE NOTICE 'FALHOU: exclusao de transacao aceita';
+    EXCEPTION WHEN raise_exception THEN RAISE NOTICE 'OK, exclusao bloqueada: %', SQLERRM;
+    END;
+    BEGIN
+        UPDATE Transacao SET valor = 1 WHERE id_transacao = 1;
+        RAISE NOTICE 'FALHOU: alteracao de transacao aceita';
+    EXCEPTION WHEN raise_exception THEN RAISE NOTICE 'OK, alteracao bloqueada';
+    END;
+END $$;
+
+-- 10c) troca de cargo recalcula a situacao: Matheus (2, Atendente) vira Analista Credito,
+--      que exige CPA-20 e CEA, que ele nao tem
+UPDATE Funcionario SET id_cargo = 3 WHERE id_funcionario = 2;
+SELECT situacao_conformidade FROM Funcionario WHERE id_funcionario = 2;
+-- esperado: Irregular
+UPDATE Funcionario SET id_cargo = 2 WHERE id_funcionario = 2;
+SELECT situacao_conformidade FROM Funcionario WHERE id_funcionario = 2;
+-- esperado: Pendente (volta ao que era)
+
+-- 10d) funcionario desligado nao aprova emprestimo
+UPDATE Funcionario SET status_vinculo = 'Desligado' WHERE id_funcionario = 4;
+DO $$
+BEGIN
+    CALL conceder_emprestimo(4, 4, 100.00, 1.50, 2);
+    RAISE NOTICE 'FALHOU: desligado aprovou emprestimo';
+EXCEPTION WHEN raise_exception THEN
+    RAISE NOTICE 'OK, negado: %', SQLERRM;
+END $$;
+UPDATE Funcionario SET status_vinculo = 'Ativo' WHERE id_funcionario = 4;

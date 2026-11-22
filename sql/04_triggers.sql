@@ -33,11 +33,11 @@ BEGIN
     WHERE id_conta = NEW.id_conta;
 
     IF variavel_status <> 'Ativa' THEN
-        RAISE EXCEPTION 'Operacao nao permitida: conta %', lower(variavel_status);
+        RAISE EXCEPTION 'Operação não permitida: a conta está %.', lower(variavel_status);
     END IF;
 
     IF NEW.tipo = 'Saque' AND variavel_saldo < NEW.valor THEN
-        RAISE EXCEPTION 'Saldo insuficiente para realizar o saque';
+        RAISE EXCEPTION 'Saldo insuficiente: saldo disponível R$ %.', variavel_saldo;
     END IF;
 
     RETURN NEW;
@@ -56,6 +56,14 @@ CREATE OR REPLACE FUNCTION fun_desaprova_emprestimo()
 RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
+        SELECT 1 FROM Funcionario
+        WHERE id_funcionario = NEW.id_funcionario
+          AND status_vinculo = 'Desligado'
+    ) THEN
+        RAISE EXCEPTION 'Empréstimo não aprovado: o funcionário está desligado.';
+    END IF;
+
+    IF EXISTS (
         SELECT 1
         FROM Funcionario f
         JOIN Cargo_Certificacao cc
@@ -70,7 +78,7 @@ BEGIN
           )
     ) THEN
         RAISE EXCEPTION
-            'Emprestimo nao aprovado: funcionario sem todas as certificacoes obrigatorias validas';
+            'Empréstimo não aprovado: o funcionário não tem todas as certificações obrigatórias válidas.';
     END IF;
 
     RETURN NEW;
@@ -168,3 +176,30 @@ FOR EACH ROW EXECUTE FUNCTION fun_trigger_conformidade();
 CREATE TRIGGER recalcula_conformidade_treinamento
 AFTER INSERT OR UPDATE OR DELETE ON Funcionario_Treinamento
 FOR EACH ROW EXECUTE FUNCTION fun_trigger_conformidade();
+
+CREATE OR REPLACE FUNCTION fun_bloqueia_alteracao_transacao()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE EXCEPTION 'Transações não podem ser alteradas ou excluídas. Para corrigir, registre uma nova transação.';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER bloqueia_alteracao_transacao
+BEFORE UPDATE OR DELETE ON Transacao
+FOR EACH ROW
+EXECUTE FUNCTION fun_bloqueia_alteracao_transacao();
+
+CREATE OR REPLACE FUNCTION fun_trigger_conformidade_cargo()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Funcionario
+    SET situacao_conformidade = fun_calcula_conformidade(NEW.id_funcionario)
+    WHERE id_funcionario = NEW.id_funcionario;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER recalcula_conformidade_cargo
+AFTER INSERT OR UPDATE OF id_cargo ON Funcionario
+FOR EACH ROW EXECUTE FUNCTION fun_trigger_conformidade_cargo();

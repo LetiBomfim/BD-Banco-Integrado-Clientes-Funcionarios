@@ -21,7 +21,7 @@ CREATE TABLE Funcionario (
         CHECK (situacao_conformidade IN ('Regular', 'Pendente', 'Irregular')),
     status_vinculo VARCHAR(20) DEFAULT 'Ativo'
         CHECK (status_vinculo IN ('Ativo', 'Desligado')),
-    senha_hash VARCHAR(250),
+    senha_hash VARCHAR(250) NOT NULL,
 
 
     FOREIGN KEY (id_gerente)
@@ -74,8 +74,9 @@ CREATE TABLE Conta (
     id_conta INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_tipo INT NOT NULL,
-    numero INT,
-    saldo DECIMAL(15,2),
+    numero INT NOT NULL UNIQUE,
+    saldo DECIMAL(15,2) NOT NULL DEFAULT 0
+        CHECK (saldo >= 0),
     data_abertura DATE,
     status VARCHAR(20)
         CHECK (status IN ('Ativa', 'Bloqueada', 'Encerrada')),
@@ -94,10 +95,11 @@ CREATE TABLE Emprestimo (
     id_emprestimo INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_conta INT NOT NULL,
     id_funcionario INT NOT NULL,
-    valor_emprestimo DECIMAL(15,2) NOT NULL,
+    valor_emprestimo DECIMAL(15,2) NOT NULL
+        CHECK (valor_emprestimo > 0),
     taxa_juros_mes DECIMAL(8,2),
     quantidade_parcelas INT,
-    data_pedido DATE,
+    data_pedido DATE DEFAULT CURRENT_DATE,
     status VARCHAR(20) DEFAULT 'Ativo'
         CHECK (status IN ('Ativo', 'Quitado', 'Cancelado')),
 
@@ -117,8 +119,9 @@ CREATE TABLE Transacao (
     id_funcionario INT NOT NULL,
     tipo VARCHAR(20) NOT NULL
         CHECK (tipo IN ('Deposito', 'Saque')),
-    valor DECIMAL(15,2) NOT NULL,
-    data_hora TIMESTAMP,
+    valor DECIMAL(15,2) NOT NULL
+        CHECK (valor > 0),
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     descricao VARCHAR(50),
 
 

@@ -1,6 +1,9 @@
 CREATE VIEW view_conformidade_equipe AS
 SELECT
+    f.id_funcionario,
     f.nome AS funcionario,
+    f.situacao_conformidade,
+    f.status_vinculo,
     c.nome AS cargo,
     g.nome AS gerente,
     cert.nome AS certificacao_exigida,

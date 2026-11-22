@@ -1,4 +1,3 @@
-
 INSERT INTO Cargo (nome, nivel, descricao) VALUES
     ('Gerente', 5, 'Gestao de agencia, equipes e operacoes'),
     ('Atendente', 2, 'Atendimento ao cliente, documentos e contas'),
@@ -10,16 +9,16 @@ INSERT INTO Funcionario (
     id_gerente, id_cargo, nome, cpf, email, login,
     data_admissao, situacao_conformidade, status_vinculo, senha_hash
 ) VALUES
-    (NULL, 1, 'Helena Vasconcelos', '10120230301', 'helena.v@banco.local', 'helena.vasconcelos', '2022-02-10', 'Regular', 'Ativo', 'hash_helena_123'),
-    (1, 2, 'Matheus Nogueira', '10120230302', 'matheus.n@banco.local', 'matheus.nogueira', '2023-03-15', 'Regular', 'Ativo', 'hash_matheus_123'),
-    (1, 2, 'Clara Cavalcanti', '10120230303', 'clara.c@banco.local', 'clara.cavalcanti', '2023-05-01', 'Irregular', 'Ativo', 'hash_clara_123'),
-    (1, 3, 'Gustavo Tavares', '10120230304', 'gustavo.t@banco.local', 'gustavo.tavares', '2022-08-20', 'Regular', 'Ativo', 'hash_gustavo_123'),
-    (1, 2, 'Isabela Monteiro', '10120230305', 'isabela.m@banco.local', 'isabela.monteiro', '2024-01-12', 'Pendente', 'Ativo', 'hash_isabela_123'),
-    (NULL, 1, 'Diego Azevedo', '10120230306', 'diego.a@banco.local', 'diego.azevedo', '2021-11-05', 'Pendente', 'Ativo', 'hash_diego_123'),
-    (6, 3, 'Sofia Medeiros', '10120230307', 'sofia.m@banco.local', 'sofia.medeiros', '2023-09-18', 'Irregular', 'Ativo', 'hash_sofia_123'),
-    (6, 2, 'Henrique Peixoto', '10120230308', 'henrique.p@banco.local', 'henrique.peixoto', '2024-03-04', 'Regular', 'Ativo', 'hash_henrique_123'),
-    (6, 2, 'Laura Silveira', '10120230309', 'laura.s@banco.local', 'laura.silveira', '2024-06-22', 'Regular', 'Ativo', 'hash_laura_123'),
-    (6, 4, 'Vinicius Bittencourt', '10120230310', 'vinicius.b@banco.local', 'vinicius.bittencourt', '2022-04-11', 'Regular', 'Ativo', 'hash_vinicius_123');
+    (NULL, 1, 'Helena Vasconcelos', '10120230301', 'helena.v@banco.local', 'helena.vasconcelos', '2022-02-10', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (1, 2, 'Matheus Nogueira', '10120230302', 'matheus.n@banco.local', 'matheus.nogueira', '2023-03-15', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (1, 2, 'Clara Cavalcanti', '10120230303', 'clara.c@banco.local', 'clara.cavalcanti', '2023-05-01', 'Irregular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (1, 3, 'Gustavo Tavares', '10120230304', 'gustavo.t@banco.local', 'gustavo.tavares', '2022-08-20', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (1, 2, 'Isabela Monteiro', '10120230305', 'isabela.m@banco.local', 'isabela.monteiro', '2024-01-12', 'Pendente', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (NULL, 1, 'Diego Azevedo', '10120230306', 'diego.a@banco.local', 'diego.azevedo', '2021-11-05', 'Pendente', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (6, 3, 'Sofia Medeiros', '10120230307', 'sofia.m@banco.local', 'sofia.medeiros', '2023-09-18', 'Irregular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (6, 2, 'Henrique Peixoto', '10120230308', 'henrique.p@banco.local', 'henrique.peixoto', '2024-03-04', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (6, 2, 'Laura Silveira', '10120230309', 'laura.s@banco.local', 'laura.silveira', '2024-06-22', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b'),
+    (6, 4, 'Vinicius Bittencourt', '10120230310', 'vinicius.b@banco.local', 'vinicius.bittencourt', '2022-04-11', 'Regular', 'Ativo', 'pbkdf2_sha256$120000$ced6dbf3692e512930b554089d7460b3$82b6248f24b22f35042908e7a9a22b86062f4af7559d09428ceb40f4bc33d67b');
 
 
 INSERT INTO Cliente (
