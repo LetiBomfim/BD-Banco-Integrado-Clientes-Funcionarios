@@ -12,7 +12,8 @@ MENSAGENS_CHECK = {
     "emprestimo_status_check": "Status do empréstimo inválido.",
     "cargo_nivel_check": "O nível do cargo deve ficar entre 1 e 5.",
     "funcionario_treinamento_progresso_check": "O progresso deve ficar entre 0 e 100.",
-    "funcionario_treinamento_check": "Uma participação concluída precisa ter data de conclusão.",
+    "ck_conclusao_obrigatoria": "Uma participação concluída precisa ter data de conclusão.",
+    "ck_conclusao_apos_inscricao": "A data de conclusão não pode ser anterior à inscrição.",
     "funcionario_certificacao_check": "A data de validade precisa ser posterior à data de obtenção.",
     "documento_tipo_check": "Tipo de documento inválido.",
 }
