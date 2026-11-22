@@ -17,8 +17,8 @@ CREATE TABLE Funcionario (
     login VARCHAR(30) NOT NULL UNIQUE,
     data_admissao DATE,
     -- derivada: mantida por trigger
-    situacao_certificacao VARCHAR(10) DEFAULT 'Regular'
-        CHECK (situacao_certificacao IN ('Regular', 'Pendente', 'Irregular')),
+    situacao_conformidade VARCHAR(10) DEFAULT 'Regular'
+        CHECK (situacao_conformidade IN ('Regular', 'Pendente', 'Irregular')),
     status_vinculo VARCHAR(20) DEFAULT 'Ativo'
         CHECK (status_vinculo IN ('Ativo', 'Desligado')),
     senha_hash VARCHAR(250),

@@ -4,11 +4,11 @@ BEGIN
     IF NEW.tipo = 'Deposito' THEN
         UPDATE Conta
         SET saldo = saldo + NEW.valor
-        WHERE NEW.id_conta = id_conta;
+        WHERE Conta.id_conta = NEW.id_conta;
     ELSE 
         UPDATE Conta
         SET saldo = saldo - NEW.valor
-        WHERE NEW.id_conta = id_conta;
+        WHERE Conta.id_conta = NEW.id_conta;
     END IF;
 
     RETURN NEW;
@@ -82,52 +82,85 @@ EXECUTE FUNCTION fun_desaprova_emprestimo();
 
 --------------------------------------------------------------------
 
-
-CREATE OR REPLACE FUNCTION fun_recalcula_situacao_certificacao()
-RETURNS TRIGGER AS $$
-DECLARE
-    variavel_id_funcionario INT;
+CREATE OR REPLACE FUNCTION fun_calcula_conformidade(p_id_funcionario INT)
+RETURNS VARCHAR AS $$
 BEGIN
-    IF TG_OP = 'DELETE' THEN
-        variavel_id_funcionario := OLD.id_funcionario;
-    ELSE
-        variavel_id_funcionario := NEW.id_funcionario;
+    -- 1) Irregular: cargo exige certificacao que ele nao tem ou que esta vencida
+    IF EXISTS (
+        SELECT 1
+        FROM Funcionario f
+        JOIN Cargo_Certificacao cc
+            ON cc.id_cargo = f.id_cargo
+        LEFT JOIN Funcionario_Certificacao fc
+            ON fc.id_funcionario = f.id_funcionario
+           AND fc.id_certificacao = cc.id_certificacao
+        WHERE f.id_funcionario = p_id_funcionario
+          AND (fc.id_certificacao IS NULL
+               OR fc.data_validade < CURRENT_DATE)
+    ) THEN
+        RETURN 'Irregular';
     END IF;
 
-    UPDATE Funcionario f
-    SET situacao_certificacao =
-        CASE
-            WHEN EXISTS (
-                SELECT 1
-                FROM Cargo_Certificacao cc
-                WHERE cc.id_cargo = f.id_cargo
-            )
-            AND NOT EXISTS (
-                SELECT 1
-                FROM Cargo_Certificacao cc
-                LEFT JOIN Funcionario_Certificacao fc
-                    ON cc.id_certificacao = fc.id_certificacao
-                    AND fc.id_funcionario = f.id_funcionario
-                WHERE cc.id_cargo = f.id_cargo
-                  AND (
-                      fc.id_certificacao IS NULL
-                      OR fc.data_validade IS NULL
-                      OR fc.data_validade < CURRENT_DATE
-                  )
-            )
-            THEN 'Regular'
-            ELSE 'Irregular'
-        END
-    WHERE f.id_funcionario = variavel_id_funcionario;
+    -- 2) Pendente: certificacao exigida vence em ate 30 dias
+    IF EXISTS (
+        SELECT 1
+        FROM Funcionario f
+        JOIN Cargo_Certificacao cc
+            ON cc.id_cargo = f.id_cargo
+        JOIN Funcionario_Certificacao fc
+            ON fc.id_funcionario = f.id_funcionario
+           AND fc.id_certificacao = cc.id_certificacao
+        WHERE f.id_funcionario = p_id_funcionario
+          AND fc.data_validade BETWEEN CURRENT_DATE AND CURRENT_DATE + 30
+    ) THEN
+        RETURN 'Pendente';
+    END IF;
+
+    --    Pendente: algum treinamento obrigatorio ainda nao Concluido
+    IF EXISTS (
+        SELECT 1
+        FROM Treinamento t
+        WHERE t.obrigacao = TRUE
+          AND NOT EXISTS (
+              SELECT 1
+              FROM Funcionario_Treinamento ft
+              WHERE ft.id_funcionario = p_id_funcionario
+                AND ft.id_treinamento = t.id_treinamento
+                AND ft.status = 'Concluido'
+          )
+    ) THEN
+        RETURN 'Pendente';
+    END IF;
+
+    -- 3) Regular
+    RETURN 'Regular';
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION fun_trigger_conformidade()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_id INT;
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        v_id := OLD.id_funcionario;
+    ELSE
+        v_id := NEW.id_funcionario;
+    END IF;
+
+    UPDATE Funcionario
+    SET situacao_conformidade = fun_calcula_conformidade(v_id)
+    WHERE id_funcionario = v_id;
 
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TRIGGER recalcula_conformidade_certificacao
+AFTER INSERT OR UPDATE OR DELETE ON Funcionario_Certificacao
+FOR EACH ROW EXECUTE FUNCTION fun_trigger_conformidade();
 
-
-CREATE TRIGGER recalcula_situacao_certificacao
-AFTER INSERT OR UPDATE OR DELETE
-ON Funcionario_Certificacao
-FOR EACH ROW
-EXECUTE FUNCTION fun_recalcula_situacao_certificacao();
+CREATE TRIGGER recalcula_conformidade_treinamento
+AFTER INSERT OR UPDATE OR DELETE ON Funcionario_Treinamento
+FOR EACH ROW EXECUTE FUNCTION fun_trigger_conformidade();
