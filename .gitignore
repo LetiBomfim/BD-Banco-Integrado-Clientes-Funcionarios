@@ -234,3 +234,7 @@ desktop.ini
 # Backups do draw.io
 *.bkp
 .$*.drawio*
+
+# Arquivos de teste local
+teste_*.py
+criar_teste.py
