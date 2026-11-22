@@ -2,9 +2,11 @@
 from .entidades import (CargoCertificacaoDAO, CargoDAO, CertificacaoDAO, ClienteDAO, ContaDAO,
                         DocumentoDAO, EmprestimoDAO, FuncionarioCertificacaoDAO, FuncionarioDAO,
                         FuncionarioTreinamentoDAO, TipoDeContaDAO, TransacaoDAO, TreinamentoDAO)
+from .erros import traduzir
 
 __all__ = [
     "CargoDAO", "CertificacaoDAO", "CargoCertificacaoDAO", "FuncionarioDAO",
     "FuncionarioCertificacaoDAO", "TreinamentoDAO", "FuncionarioTreinamentoDAO",
     "ClienteDAO", "DocumentoDAO", "TipoDeContaDAO", "ContaDAO", "TransacaoDAO", "EmprestimoDAO",
+    "traduzir",
 ]
