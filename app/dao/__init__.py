@@ -4,9 +4,10 @@ from .entidades import (CargoCertificacaoDAO, CargoDAO, CertificacaoDAO, Cliente
                         FuncionarioTreinamentoDAO, TipoDeContaDAO, TransacaoDAO, TreinamentoDAO)
 from .erros import traduzir
 
-__all__ = [
-    "CargoDAO", "CertificacaoDAO", "CargoCertificacaoDAO", "FuncionarioDAO",
-    "FuncionarioCertificacaoDAO", "TreinamentoDAO", "FuncionarioTreinamentoDAO",
-    "ClienteDAO", "DocumentoDAO", "TipoDeContaDAO", "ContaDAO", "TransacaoDAO", "EmprestimoDAO",
-    "traduzir",
+DAOS = [
+    CargoDAO, CertificacaoDAO, CargoCertificacaoDAO, FuncionarioDAO,
+    FuncionarioCertificacaoDAO, TreinamentoDAO, FuncionarioTreinamentoDAO,
+    ClienteDAO, DocumentoDAO, TipoDeContaDAO, ContaDAO, TransacaoDAO, EmprestimoDAO,
 ]
+
+__all__ = [classe.__name__ for classe in DAOS] + ["DAOS", "traduzir"]

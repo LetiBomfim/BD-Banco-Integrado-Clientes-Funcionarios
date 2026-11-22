@@ -55,12 +55,12 @@ class CargoCertificacaoDAO(TabelaDAO):
 class FuncionarioDAO(TabelaDAO):
     tabela = "funcionario"
     pk = ("id_funcionario",)
-    # situacao_certificacao fica de fora: quem calcula é o trigger
+    # situacao_conformidade fica de fora: quem calcula é o trigger
     colunas = ("id_gerente", "id_cargo", "nome", "cpf", "email", "login", "data_admissao",
                "status_vinculo", "senha_hash")
     sql_listar = """
         SELECT f.id_funcionario, f.nome, f.cpf, f.email, f.login, f.data_admissao,
-               f.situacao_certificacao, f.status_vinculo,
+               f.situacao_conformidade, f.status_vinculo,
                c.nome AS cargo, g.nome AS gerente
           FROM funcionario f
           JOIN cargo c            ON c.id_cargo = f.id_cargo
@@ -91,7 +91,7 @@ class FuncionarioDAO(TabelaDAO):
         """Devolve os dados do funcionário se login e senha estiverem corretos; senão, None."""
         linha = db.consultar_um("""
             SELECT f.id_funcionario, f.nome, f.senha_hash, f.status_vinculo,
-                   f.situacao_certificacao, c.nome AS cargo, c.nivel
+                   f.situacao_conformidade, c.nome AS cargo, c.nivel
               FROM funcionario f
               JOIN cargo c ON c.id_cargo = f.id_cargo
              WHERE f.login = %s""", (login,))
